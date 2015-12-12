@@ -40,7 +40,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/except.o \
 	${OBJECTDIR}/list.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/mem.o
+	${OBJECTDIR}/mem.o \
+	${OBJECTDIR}/table.o
 
 # Test Directory
 TESTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tests
@@ -108,6 +109,11 @@ ${OBJECTDIR}/mem.o: mem.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mem.o mem.c
+
+${OBJECTDIR}/table.o: table.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/table.o table.c
 
 # Subprojects
 .build-subprojects:
@@ -213,6 +219,19 @@ ${OBJECTDIR}/mem_nomain.o: ${OBJECTDIR}/mem.o mem.c
 	    $(COMPILE.c) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mem_nomain.o mem.c;\
 	else  \
 	    ${CP} ${OBJECTDIR}/mem.o ${OBJECTDIR}/mem_nomain.o;\
+	fi
+
+${OBJECTDIR}/table_nomain.o: ${OBJECTDIR}/table.o table.c 
+	${MKDIR} -p ${OBJECTDIR}
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/table.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} "$@.d";\
+	    $(COMPILE.c) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/table_nomain.o table.c;\
+	else  \
+	    ${CP} ${OBJECTDIR}/table.o ${OBJECTDIR}/table_nomain.o;\
 	fi
 
 # Run Test Targets
