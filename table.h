@@ -7,7 +7,7 @@ extern T Table_new(int hint, int cmp(const void *x, const void *y),
         unsigned hash(const void *key));
 extern void Table_free(T *table);
 extern int Table_length(T table);
-extern void *Table_put(T table, const void *key, const void*value);
+extern void *Table_put(T table, const void *key, void *value);
 extern void *Table_get(T table, const void *key);
 extern void *Table_remove(T table, const void *key);
 extern void Table_map(T table, void apply(const void* key, void **value, void *cl),

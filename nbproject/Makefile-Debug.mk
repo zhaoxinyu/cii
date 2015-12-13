@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/assert.o \
 	${OBJECTDIR}/atom.o \
 	${OBJECTDIR}/except.o \
+	${OBJECTDIR}/getword.o \
 	${OBJECTDIR}/list.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/mem.o \
@@ -49,12 +50,14 @@ TESTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tests
 # Test Files
 TESTFILES= \
 	${TESTDIR}/TestFiles/f2 \
-	${TESTDIR}/TestFiles/f1
+	${TESTDIR}/TestFiles/f1 \
+	${TESTDIR}/TestFiles/f3
 
 # Test Object Files
 TESTOBJECTFILES= \
 	${TESTDIR}/tests/atom_test.o \
-	${TESTDIR}/tests/list_test.o
+	${TESTDIR}/tests/list_test.o \
+	${TESTDIR}/tests/table_test.o
 
 # C Compiler Flags
 CFLAGS=
@@ -95,6 +98,11 @@ ${OBJECTDIR}/except.o: except.c
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/except.o except.c
 
+${OBJECTDIR}/getword.o: getword.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/getword.o getword.c
+
 ${OBJECTDIR}/list.o: list.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -130,6 +138,10 @@ ${TESTDIR}/TestFiles/f1: ${TESTDIR}/tests/list_test.o ${OBJECTFILES:%.o=%_nomain
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc}   -o ${TESTDIR}/TestFiles/f1 $^ ${LDLIBSOPTIONS} 
 
+${TESTDIR}/TestFiles/f3: ${TESTDIR}/tests/table_test.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc}   -o ${TESTDIR}/TestFiles/f3 $^ ${LDLIBSOPTIONS} 
+
 
 ${TESTDIR}/tests/atom_test.o: tests/atom_test.c 
 	${MKDIR} -p ${TESTDIR}/tests
@@ -141,6 +153,12 @@ ${TESTDIR}/tests/list_test.o: tests/list_test.c
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
 	$(COMPILE.c) -g -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/list_test.o tests/list_test.c
+
+
+${TESTDIR}/tests/table_test.o: tests/table_test.c 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.c) -g -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/table_test.o tests/table_test.c
 
 
 ${OBJECTDIR}/assert_nomain.o: ${OBJECTDIR}/assert.o assert.c 
@@ -180,6 +198,19 @@ ${OBJECTDIR}/except_nomain.o: ${OBJECTDIR}/except.o except.c
 	    $(COMPILE.c) -g -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/except_nomain.o except.c;\
 	else  \
 	    ${CP} ${OBJECTDIR}/except.o ${OBJECTDIR}/except_nomain.o;\
+	fi
+
+${OBJECTDIR}/getword_nomain.o: ${OBJECTDIR}/getword.o getword.c 
+	${MKDIR} -p ${OBJECTDIR}
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/getword.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} "$@.d";\
+	    $(COMPILE.c) -g -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/getword_nomain.o getword.c;\
+	else  \
+	    ${CP} ${OBJECTDIR}/getword.o ${OBJECTDIR}/getword_nomain.o;\
 	fi
 
 ${OBJECTDIR}/list_nomain.o: ${OBJECTDIR}/list.o list.c 
@@ -240,6 +271,7 @@ ${OBJECTDIR}/table_nomain.o: ${OBJECTDIR}/table.o table.c
 	then  \
 	    ${TESTDIR}/TestFiles/f2 || true; \
 	    ${TESTDIR}/TestFiles/f1 || true; \
+	    ${TESTDIR}/TestFiles/f3 || true; \
 	else  \
 	    ./${TEST} || true; \
 	fi
