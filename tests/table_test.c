@@ -89,6 +89,7 @@ int main(int argc, char *argv[]) {
             fclose(fp);
         }
     }
-    
+    if (argc == 1) wf(NULL, stdin);
+
     return EXIT_SUCCESS;
 }
